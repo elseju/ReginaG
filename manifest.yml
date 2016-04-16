@@ -1,13 +1,8 @@
-declared-services:
-  dialog-service:
-    label: dialog
-    plan: standard
 applications:
-- services:
-  - dialog-service
-  name: ReginaG
-  command: node app.js
-  path: .
+- path: target/JavaHelloWorldApp.war
   memory: 512M
-  env:
-    NODE_ENV: production
+  instances: 1
+  domain: mybluemix.net
+  name: ReginaG
+  host: reginag
+  disk_quota: 1024M

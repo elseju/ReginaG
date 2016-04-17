@@ -123,6 +123,21 @@
     <artifactId>twilio-java-sdk</artifactId>
     <version>3.4.5</version>
 </dependency>
+      <dependency>
+          <groupId>org.apache.geronimo.specs</groupId>
+          <artifactId>geronimo-servlet_3.0_spec</artifactId>
+          <version>1.0</version>
+      </dependency>
+      <dependency>
+          <groupId>org.apache.geronimo.specs</groupId>
+          <artifactId>geronimo-servlet_3.0_spec</artifactId>
+          <version>1.0</version>
+      </dependency>
+      <dependency>
+          <groupId>org.apache.geronimo.specs</groupId>
+          <artifactId>geronimo-servlet_3.0_spec</artifactId>
+          <version>1.0</version>
+      </dependency>
   </dependencies>
   <build>
     <sourceDirectory>src</sourceDirectory>

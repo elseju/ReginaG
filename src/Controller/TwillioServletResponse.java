@@ -35,8 +35,8 @@ public class TwillioServletResponse extends HttpServlet {
         System.out.println("fromNumber " + fromNumber);
         System.out.println("body " + body);
 
-        Logger.getLogger (TwillioServletResponse.class.getName()).log(Level.INFO, "Server " + serverName);
-        Logger.getLogger (TwillioServletResponse.class.getName()).log(Level.INFO, "fromNumber " + fromNumber);
-        Logger.getLogger (TwillioServletResponse.class.getName()).log(Level.INFO, "body " + body);
+        Logger.getLogger (TwillioServletResponse.class.getName()).info("Server " + serverName);
+        Logger.getLogger (TwillioServletResponse.class.getName()).info("fromNumber " + fromNumber);
+        Logger.getLogger (TwillioServletResponse.class.getName()).info("body " + body);
     }
 }

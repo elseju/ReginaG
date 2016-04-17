@@ -32,7 +32,7 @@ public class TwillioServletResponse extends HttpServlet {
 
         String incoming = ReginaConnect.getInstance().getRequest(body,fromNumber);
 
-        Message message = new Message(incoming.toString());
+        Message message = new Message(incoming);
 
 
 

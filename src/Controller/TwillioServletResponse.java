@@ -11,6 +11,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.twilio.sdk.verbs.TwiMLResponse;
 import com.twilio.sdk.verbs.TwiMLException;
@@ -32,5 +34,9 @@ public class TwillioServletResponse extends HttpServlet {
         System.out.println("Server " + serverName);
         System.out.println("fromNumber " + fromNumber);
         System.out.println("body " + body);
+
+        Logger.getLogger (TwillioServletResponse.class.getName()).log(Level.INFO, "Server " + serverName);
+        Logger.getLogger (TwillioServletResponse.class.getName()).log(Level.INFO, "fromNumber " + fromNumber);
+        Logger.getLogger (TwillioServletResponse.class.getName()).log(Level.INFO, "body " + body);
     }
 }

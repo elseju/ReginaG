@@ -29,29 +29,8 @@ public class TwillioServletResponse extends HttpServlet {
         TwiMLResponse twiml = new TwiMLResponse();
 
         //TODO logic for responses goes here
-        String url = "https://api.api.ai/v1/query?v=20150910&query=" + body + "&lang=EN&sessionId=" + fromNumber;
 
-        URL obj = new URL(url);
-        HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-
-        // optional default is GET
-        con.setRequestMethod("GET");
-
-        //add request header
-        con.setRequestProperty("User-Agent", USER_AGENT);
-
-        int responseCode = con.getResponseCode();
-        //System.out.println("\nSending 'GET' request to URL : " + url);
-        //System.out.println("Response Code : " + responseCode);
-
-        BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
-        String inputLine;
-        StringBuffer incoming = new StringBuffer();
-
-        while ((inputLine = in.readLine()) != null) {
-            incoming.append(inputLine);
-        }
-        in.close();
+        String incoming = ReginaConnect.getInstance().getRequest(body,fromNumber);
 
         Message message = new Message(incoming.toString());
 

@@ -31,6 +31,7 @@ public class TwillioServletResponse extends HttpServlet {
 
         String incoming = ReginaConnect.getInstance().getRequest(body,fromNumber);
 
+        /*
         Message message = new Message(incoming);
 
         TwiMLResponse twiml = new TwiMLResponse();
@@ -42,5 +43,7 @@ public class TwillioServletResponse extends HttpServlet {
 
         response.setContentType("application/xml");
         response.getWriter().print(twiml.toXML());
+
+        */
     }
 }

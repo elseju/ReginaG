@@ -15,6 +15,8 @@ public class TwillioServletResponse extends HttpServlet {
     // You can also use doGet() or doPost()
     public void service(HttpServletRequest request, HttpServletResponse response) throws IOException {
         TwiMLResponse twiml = new TwiMLResponse();
+
+        //TODO logic for responses goes here
         Message message = new Message("Hello, Mobile Monkey");
         try {
             twiml.append(message);

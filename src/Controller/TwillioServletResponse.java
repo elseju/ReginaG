@@ -25,23 +25,17 @@ public class TwillioServletResponse extends HttpServlet {
         String fromNumber = request.getParameter("From");
         String body = request.getParameter("Body");
 
-
-        TwiMLResponse twiml = new TwiMLResponse();
-
-        //TODO logic for responses goes here
-
         String incoming = ReginaConnect.getInstance().getRequest(body,fromNumber);
 
         Message message = new Message(incoming);
 
-
-
+        TwiMLResponse twiml = new TwiMLResponse();
         try {
             twiml.append(message);
         } catch (TwiMLException e) {
             e.printStackTrace();
         }
- 
+
         response.setContentType("application/xml");
         response.getWriter().print(twiml.toXML());
     }

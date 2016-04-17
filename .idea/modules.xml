@@ -2,8 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/JavaHelloWorldApp.iml" filepath="$PROJECT_DIR$/JavaHelloWorldApp.iml" />
-      <module fileurl="file://$PROJECT_DIR$/src/main/main.iml" filepath="$PROJECT_DIR$/src/main/main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ReginaG.iml" filepath="$PROJECT_DIR$/ReginaG.iml" />
     </modules>
   </component>
 </project>

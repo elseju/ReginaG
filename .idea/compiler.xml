@@ -22,11 +22,11 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="true" />
-        <module name="JavaHelloWorldApp" />
+        <module name="ReginaG" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="JavaHelloWorldApp" target="1.7" />
+      <module name="ReginaG" target="1.5" />
     </bytecodeTargetLevel>
   </component>
 </project>

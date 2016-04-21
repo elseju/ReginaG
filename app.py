@@ -2,15 +2,16 @@ from config import *
 from flask import Flask, request, redirect, render_template
 from watson_developer_cloud import ToneAnalyzerV3Beta
 from pymessenger.bot import Bot
+from pymongo import MongoClient
 import requests
 import twilio.twiml
 import json
 import apiai
-import redis
 
 app = Flask(__name__)
-db = redis.StrictRedis(host=REDIS_HOST, port=REDIS_PORT, db=0)
-tone_analyzer = ToneAnalyzerV3Beta(username=WATSON_USERNAME,password=WATSON_PASSWORD,version=WATSON_API_VERSION)
+
+client = MongoClient()
+db = client.reginag
 
 @app.route("/")
 def hello():
@@ -22,7 +23,8 @@ def process_sms():
     phone_number = request.values.get('From', None)
     sms_message = request.values.get('Body', None)
     resp = twilio.twiml.Response()
-    resp.message(ask_regina(phone_number, sms_message)['text'])
+    regina_answer = ask_regina(phone_number, sms_message)['text']
+    resp.message(regina_answer)
     return str(resp)
     
 @app.route("/fb", methods=['GET', 'POST'])
@@ -49,10 +51,9 @@ def process_fb():
                 bot.send_text_message(recipient_id, regina_answer)
             else:
                 pass
-    return "success"
+    return regina_answer
 
 def ask_regina(id, message):
-    log_message(id, message)
     ai = apiai.ApiAI(APIAI_CLIENT_ACCESS_TOKEN, APIAI_SUBSCRIPTION_KEY)
     ai_request = ai.text_request()
     ai_request.query = message
@@ -68,24 +69,20 @@ def ask_regina(id, message):
 
     #if Bye intent, reset conversation
     if regina_intent == "Bye":
-        clear_log(id)
+        regina_text = "Thanks for playing!"
+        
+    #log message and response to db
+    db.messages.insert_one({"sender_id": id, "message": message, "response": regina_text})
 
     return {'text' : regina_text, 'intent' : regina_intent}
     
 def analyze_tone(conversation):
     """ Take conversation text and calculates the confidence score using Watson Tone Analyzer """
+    tone_analyzer = ToneAnalyzerV3Beta(username=WATSON_USERNAME,password=WATSON_PASSWORD,version=WATSON_API_VERSION)
     tone_response = tone_analyzer.tone(conversation)
     confidence = tone_response['document_tone']['tone_categories'][1]['tones'][1]['score']
     return confidence
 
-def log_message(id, message):
-    db.append(id, message + " ")
-
-def get_log(id):
-    db.get(id)
-
-def clear_log(id):
-    db.delete(id)
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0')

@@ -22,7 +22,7 @@ def process_sms():
     phone_number = request.values.get('From', None)
     sms_message = request.values.get('Body', None)
     resp = twilio.twiml.Response()
-    resp.message(ask_regina(phone_number, sms_message))
+    resp.message(ask_regina(phone_number, sms_message)['text'])
     return str(resp)
     
 @app.route("/fb", methods=['GET', 'POST'])
@@ -42,22 +42,35 @@ def process_fb():
             if (x.get('message') and x['message'].get('text')):
                 fb_message = x['message']['text']
                 recipient_id = x['sender']['id']
-                unicode_response = ask_regina(recipient_id, fb_message)
-                regina_response = unicode_response.encode('ascii', 'replace')
-                bot.send_text_message(recipient_id, regina_response)
+                response = ask_regina(recipient_id, fb_message)
+                text = response['text']
+                intent = response['intent']
+                regina_answer = text.encode('ascii', 'replace')
+                bot.send_text_message(recipient_id, regina_answer)
             else:
                 pass
     return "success"
 
 def ask_regina(id, message):
-        log_message(id, message)
-        ai = apiai.ApiAI(APIAI_CLIENT_ACCESS_TOKEN, APIAI_SUBSCRIPTION_KEY)
-        ai_request = ai.text_request()
-        ai_request.query = message
-        ai_response = ai_request.getresponse()
-        response_json = json.loads(ai_response.read())
-        regina_response = response_json['result']['fulfillment']['speech']
-    return regina_response
+    log_message(id, message)
+    ai = apiai.ApiAI(APIAI_CLIENT_ACCESS_TOKEN, APIAI_SUBSCRIPTION_KEY)
+    ai_request = ai.text_request()
+    ai_request.query = message
+    ai_response = ai_request.getresponse()
+    response_dict = json.loads(ai_response.read())
+    regina_text = response_dict['result']['fulfillment']['speech']
+    
+    #check if an intent was identified by api.ai
+    try:
+        regina_intent = response_dict['result']['metadata']['intentName']
+    except KeyError:
+        regina_intent = "none"
+
+    #if Bye intent, reset conversation
+    if regina_intent == "Bye":
+        clear_log(id)
+
+    return {'text' : regina_text, 'intent' : regina_intent}
     
 def analyze_tone(conversation):
     """ Take conversation text and calculates the confidence score using Watson Tone Analyzer """
@@ -72,7 +85,7 @@ def get_log(id):
     db.get(id)
 
 def clear_log(id):
-	db.delete(id)
+    db.delete(id)
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0')

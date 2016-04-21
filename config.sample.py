@@ -8,5 +8,5 @@ WATSON_PASSWORD = ''
 WATSON_API_VERSION = ''
 
 #db settings
-REDIS_POST = 6379
+REDIS_PORT = 6379
 REDIS_HOST = 'localhost'

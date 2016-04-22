@@ -72,13 +72,15 @@ def ask_regina(sender_id, message):
     except KeyError:
         regina_intent = "none"
 
-    #if Bye intent, close session
+    #if Bye intent, analyze tone and close session
     if regina_intent == "Bye":
+        conversation = concatenate_session(session_id)
+        confidence = analyze_tone(conversation)
+        regina_text = "Your confidence score was {0:.2%}. Thanks for playing!".format(confidence)
         close_session(session_id)
-        regina_text = "Thanks for playing!"
-        
-    #log message and response to db
-    db.messages.insert_one({"sender_id": sender_id, "message": message, "response": regina_text})
+    else:
+        #log message and response to db
+        db.messages.insert_one({"sender_id": sender_id, "session_id": session_id, "message": message, "response": regina_text})
 
     return {'text' : regina_text, 'intent' : regina_intent}
 
@@ -95,6 +97,13 @@ def find_session(sender_id):
 def close_session(session_id):
     """Deletes the session with the given id"""
     db.sessions.remove({'session_id': session_id})
+    
+def concatenate_session(session_id):
+    """Concatenates all messages in the session"""
+    conversation = ""
+    for msg in db.messages.find({'session_id': session_id}):
+        conversation += (msg['message'] + "\n") 
+    return conversation
     
 def analyze_tone(conversation):
     """ Take conversation text and calculates the confidence score using Watson Tone Analyzer """

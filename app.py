@@ -7,6 +7,7 @@ import requests
 import twilio.twiml
 import json
 import apiai
+import uuid
 
 app = Flask(__name__)
 
@@ -53,7 +54,11 @@ def process_fb():
                 pass
     return regina_answer
 
-def ask_regina(id, message):
+def ask_regina(sender_id, message):
+    #identify the current session
+    session_id = find_session(sender_id)
+    
+    #query Api.ai
     ai = apiai.ApiAI(APIAI_CLIENT_ACCESS_TOKEN, APIAI_SUBSCRIPTION_KEY)
     ai_request = ai.text_request()
     ai_request.query = message
@@ -67,14 +72,29 @@ def ask_regina(id, message):
     except KeyError:
         regina_intent = "none"
 
-    #if Bye intent, reset conversation
+    #if Bye intent, close session
     if regina_intent == "Bye":
+        close_session(session_id)
         regina_text = "Thanks for playing!"
         
     #log message and response to db
-    db.messages.insert_one({"sender_id": id, "message": message, "response": regina_text})
+    db.messages.insert_one({"sender_id": sender_id, "message": message, "response": regina_text})
 
     return {'text' : regina_text, 'intent' : regina_intent}
+
+def find_session(sender_id):
+    """ Checks if a session exists for the given sender id, else create a new one """
+    session = db.sessions.find_one({'sender_id': sender_id})
+    if session is None:    
+        session_id = str(uuid.uuid4())
+        db.sessions.insert_one({'sender_id': sender_id, 'session_id': session_id})
+    else:
+        session_id = session['session_id']
+    return session_id
+    
+def close_session(session_id):
+    """Deletes the session with the given id"""
+    db.sessions.remove({'session_id': session_id})
     
 def analyze_tone(conversation):
     """ Take conversation text and calculates the confidence score using Watson Tone Analyzer """
@@ -82,7 +102,6 @@ def analyze_tone(conversation):
     tone_response = tone_analyzer.tone(conversation)
     confidence = tone_response['document_tone']['tone_categories'][1]['tones'][1]['score']
     return confidence
-
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0')

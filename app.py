@@ -80,7 +80,7 @@ def ask_regina(sender_id, message):
         close_session(session_id)
     else:
         #log message and response to db
-        db.messages.insert_one({"sender_id": sender_id, "session_id": session_id, "message": message, "response": regina_text})
+        db.messages.insert_one({'createdAt': new Date(), 'sender_id': sender_id, 'session_id': session_id, 'message': message, 'response': regina_text})
 
     return {'text' : regina_text, 'intent' : regina_intent}
 
@@ -89,7 +89,7 @@ def find_session(sender_id):
     session = db.sessions.find_one({'sender_id': sender_id})
     if session is None:    
         session_id = str(uuid.uuid4())
-        db.sessions.insert_one({'sender_id': sender_id, 'session_id': session_id})
+        db.sessions.insert_one({'createdAt': new Date(), 'sender_id': sender_id, 'session_id': session_id})
     else:
         session_id = session['session_id']
     return session_id
